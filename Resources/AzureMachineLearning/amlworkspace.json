@@ -1,0 +1,62 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "amlLocation": {
+      "type": "string",
+      "defaultValue": "West Central US",
+    }
+  },
+  "variables": {
+    "namePrefix": "[resourceGroup().name]",
+    "location": "[parameters('amlLocation')]",
+    "mlVersion": "2016-04-01",
+    "storageVersion": "2015-06-15",
+    "storageAccountName": "[concat(variables('namePrefix'),'mlstorage')]",
+    "mlWorkspaceName": "[concat(variables('namePrefix'),'mlworkspace')]",
+    "mlResourceId": "[resourceId('Microsoft.MachineLearning/workspaces', variables('mlWorkspaceName'))]",
+    "storageResourceId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+    "storageAccountType": "Standard_LRS"
+  },
+
+  "resources": [
+    {
+      "apiVersion": "[variables('storageVersion')]",
+      "name": "[variables('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[variables('location')]",
+      "properties": {
+        "accountType": "[variables('storageAccountType')]"
+      }
+    },
+    {
+      "apiVersion": "[variables('mlVersion')]",
+      "type": "Microsoft.MachineLearning/workspaces",
+      "name": "[variables('mlWorkspaceName')]",
+      "location": "[variables('location')]",
+      "dependsOn": [ "[variables('storageResourceId')]" ],
+      "properties": {
+        "UserStorageAccountId": "[variables('storageResourceId')]"
+      }
+    }
+  ],
+
+  "outputs": {
+    "mlWorkspaceObject": {
+      "type": "object",
+      "value": "[reference(variables('mlResourceId'), variables('mlVersion'))]"
+    },
+    "mlWorkspaceToken": {
+      "type": "string",
+      "value": "[listWorkspaceKeys(variables('mlResourceId'), variables('mlVersion')).primaryToken]"
+    },
+    "mlWorkspaceWorkspaceID": {
+      "type": "string",
+      "value": "[reference(variables('mlResourceId'), variables('mlVersion')).WorkspaceId]"
+    },
+    "mlWorkspaceWorkspaceLink": {
+      "type": "string",
+      "value": "[concat('https://studio.azureml.net/Home/ViewWorkspace/', reference(variables('mlResourceId'), variables('mlVersion')).WorkspaceId)]"
+    }
+  }
+}
