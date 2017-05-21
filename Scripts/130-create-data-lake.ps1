@@ -45,7 +45,7 @@ Add-AzureRmDataLakeAnalyticsDataSource -ResourceGroupName $resourceGroupName -Ac
 #endregion
 
 #region Upload and register assemblies
-$assemblyDir="$scriptDir\..\Resources\ADLA-JSON-Assembly"
+$assemblyDir="$scriptDir\..\Resources\DataLake"
 Import-AzureRmDataLakeStoreItem -AccountName $dataLakeStoreName -Path $assemblyDir -Destination "/Assemblies" -Force -Recurse
 
 $j=Submit-AzureRmDataLakeAnalyticsJob -Account $dataLakeAnalyticsName `

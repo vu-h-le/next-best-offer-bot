@@ -17,6 +17,6 @@ New-AzureRmSqlServerFirewallRule -ResourceGroupName $resourceGroupName -ServerNa
 New-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -DatabaseName $dwName -ServerName $sqlName -ResourceGroupName $resourceGroupName -Edition "DataWarehouse"
 
 #Setup messages table
-callSql $dwName (Get-Content "$scriptDir\..\Resources\SqlDw\schema.sql" -Raw)
+callSql $dwName (Get-Content "$scriptDir\..\Resources\SqlDataWarehouse\schema.sql" -Raw)
 #endregion
 

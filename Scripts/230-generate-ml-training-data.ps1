@@ -3,7 +3,7 @@ $scriptDir=($PSScriptRoot, '.' -ne "")[0]
 . "$scriptDir\Include\common.ps1"
 
 $temp=New-TemporaryFile
-substituteInTemplate  "$scriptDir\..\Resources\PrepareMLTrainingSet\prepare-ml-training-set.usql" @{
+substituteInTemplate  "$scriptDir\..\Resources\MachineLearning\prepare-ml-training-set.usql" @{
     '$storageAccountName' = $storageAccountName
     }| Out-File $temp
 

@@ -9,7 +9,7 @@ $eventHubListenPolicyKey=(Get-AzureRmEventHubNamespaceKey -ResourceGroupName $re
 $eventHubListenPolicySASKey=[regex]::Match($eventHubListenPolicyKey, ';SharedAccessKey=([^;]+)').Captures.Groups[1].Value
 
 $temp=New-TemporaryFile
-substituteInTemplate ..\Resources\FromEventHubStreamAnalytics\Definition.json @{
+substituteInTemplate ..\Resources\StreamAnalytics\Definition.json @{
  '$eventHubName' = $eventHubName
  '$eventHubNamespace' = $eventHubNamespace
  '$eventHubListenPolicyName' = $eventHubListenPolicyName

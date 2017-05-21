@@ -9,8 +9,8 @@ $cognitiveServiceKey=(Get-AzureRmCognitiveServicesAccountKey -ResourceGroupName 
 
 Write-Host "Create a Logic App..."  -ForegroundColor Green
 
-$requestSchema=Get-Content "..\Resources\TextAnalyticsLogicApp\request-schema.json" -Raw
-$logicAppDefinition=substituteInTemplate "..\Resources\TextAnalyticsLogicApp\Definition.json"  @{
+$requestSchema=Get-Content "..\Resources\LogicApp\request-schema.json" -Raw
+$logicAppDefinition=substituteInTemplate "..\Resources\LogicApp\Definition.json"  @{
  '$requestSchema' = $requestSchema
 }
 

@@ -14,7 +14,7 @@ $df=Get-AzureRmDataFactory -ResourceGroupName $resourceGroupName -Name $dataFact
 #endregion
 
 #region
-$resDir="$scriptDir\..\Resources\ProcessBotTextDataFactory"
+$resDir="$scriptDir\..\Resources\DataFactory"
 $linkedServicesDir="$resDir\LinkedServices"
 $pipelinesDir="$resDir\Pipelines"
 

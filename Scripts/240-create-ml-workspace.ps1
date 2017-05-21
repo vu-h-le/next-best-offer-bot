@@ -12,9 +12,9 @@ $resourceGroupName = 'deleteme2'
 $rgd = New-AzureRmResourceGroupDeployment `
             -Name ("CISBotAmlDeployment" + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
             -ResourceGroupName $resourceGroupName `
-            -TemplateFile "..\Resources\AzureMachineLearning\amlworkspace.json" `
+            -TemplateFile "..\Resources\MachineLearning\amlworkspace.json" `
             -TemplateParameterObject @{ amlLocation = $amlLocation}
-            #-TemplateParameterFile "..\Resources\AzureMachineLearning\amlworkspace.parameters.json"
+            #-TemplateParameterFile "..\Resources\MachineLearning\amlworkspace.parameters.json"
 
 # Access Azure ML Workspace Token after its deployment.
 Write-Host "AML Workspace created:"
@@ -25,9 +25,9 @@ Write-Host "Workspace Link:" $rgd.Outputs.mlWorkspaceWorkspaceLink.Value
 #endregion
     
 #region Setup AML PowerShell module and connection to the workspace that was just created
-$amlPsDll = "..\Resources\AzureMachineLearning\AzureMLPS.dll"
-$amlPsConfig = "..\Resources\AzureMachineLearning\config.json"
-$amlPsConfigTemplate = "..\Resources\AzureMachineLearning\config - template.json"
+$amlPsDll = "..\Resources\MachineLearning\AzureMLPS.dll"
+$amlPsConfig = "..\Resources\MachineLearning\config.json"
+$amlPsConfigTemplate = "..\Resources\MachineLearning\config - template.json"
 
 # Create/replace AML PowerShell config.json file with the values of Location, WorkspaceId, 
 # and AuthorizationToken from the newly created workspace 
@@ -65,7 +65,7 @@ $amlWorkspace = Get-AmlWorkspace -WorkspaceId $rgd.Outputs.mlWorkspaceWorkspaceI
                                  -Location $amlLocation
 
 Import-AmlExperimentGraph `
-    -InputFile 'C:\Users\vule\OneDrive\Work\DSA\Hackathon\Bots\CISBotHackathon-master\Resources\AzureMachineLearning\NextBestOfferAmlExperiment.json' `
+    -InputFile 'C:\Repos\next-best-offer-bot\Resources\MachineLearning\NextBestOfferAmlExperiment.json' `
     -NewName 'Next Best Offer' `
     -WorkspaceId $amlWorkspace.WorkspaceId `
     -AuthorizationToken $rgd.Outputs.mlWorkspaceToken.Value
