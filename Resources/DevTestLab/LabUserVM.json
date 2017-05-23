@@ -1,0 +1,130 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "newVMName": {
+      "type": "string",
+      "defaultValue": "BotBuilder00"
+    },
+    "labName": {
+      "type": "string",
+      "defaultValue": "CISBotHackathon"
+    },
+    "size": {
+      "type": "string",
+      "defaultValue": "Standard_DS2_v2"
+    },
+    "userName": {
+      "type": "string",
+      "defaultValue": "labuser"
+    },
+    "password": {
+      "type": "securestring",
+      "defaultValue": "[[[VmAdminPassword]]"
+    },
+    "Clone_a_git_repository.GitRepoURI": {
+      "type": "string",
+      "defaultValue": "https://github.com/vu-h-le/next-best-offer-bot.git"
+    },
+    "Clone_a_git_repository.Destination": {
+      "type": "string",
+      "defaultValue": "C:\\Repos"
+    },
+    "Clone_a_git_repository.Branch": {
+      "type": "string",
+      "defaultValue": "master"
+    },
+    "Clone_a_git_repository.PersonalAccessToken": {
+      "type": "securestring",
+      "defaultValue": "[[[GitHubPersonalAccessToken]]"
+    },
+    "Download_file_from_URI.URI": {
+      "type": "string",
+      "defaultValue": "https://acisbothackathon3498.blob.core.windows.net/botbuilderprereqs/botframework-emulator-Setup-3.5.29.exe"
+    },
+    "Download_file_from_URI.FileDestination": {
+      "type": "string",
+      "defaultValue": "c:\\Repos\\next-best-offer-bot\\Resources\\Bot\\botframework-emulator-Setup-3.5.29.exe"
+    }
+  },
+  "variables": {
+    "labSubnetName": "[concat(variables('labVirtualNetworkName'), 'Subnet')]",
+    "labVirtualNetworkId": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('labName'), variables('labVirtualNetworkName'))]",
+    "labVirtualNetworkName": "[concat('Dtl', parameters('labName'))]",
+    "vmId": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', parameters('labName'), parameters('newVMName'))]",
+    "vmName": "[concat(parameters('labName'), '/', parameters('newVMName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-04-26-preview",
+      "type": "Microsoft.DevTestLab/labs/virtualmachines",
+      "name": "[variables('vmName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "labVirtualNetworkId": "[variables('labVirtualNetworkId')]",
+        "notes": "BotBuilderCustomImage",
+        "customImageId": "/subscriptions/9d7135b4-971c-4888-a3e6-f9e45a21d7dd/resourcegroups/cisbothackathonrg031444/providers/microsoft.devtestlab/labs/cisbothackathon/customimages/botbuildercustomimage",
+        "size": "[parameters('size')]",
+        "userName": "[parameters('userName')]",
+        "password": "[parameters('password')]",
+        "isAuthenticationWithSshKey": false,
+        "artifacts": [
+          {
+            "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('labName'), 'public repo', 'windows-clone-git-repo')]",
+            "parameters": [
+              {
+                "name": "GitRepoURI",
+                "value": "[parameters('Clone_a_git_repository.GitRepoURI')]"
+              },
+              {
+                "name": "Destination",
+                "value": "[parameters('Clone_a_git_repository.Destination')]"
+              },
+              {
+                "name": "Branch",
+                "value": "[parameters('Clone_a_git_repository.Branch')]"
+              },
+              {
+                "name": "PersonalAccessToken",
+                "value": "[parameters('Clone_a_git_repository.PersonalAccessToken')]"
+              }
+            ]
+          },
+          {
+            "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('labName'), 'public repo', 'windows-download-sas-blob')]",
+            "parameters": [
+              {
+                "name": "URI",
+                "value": "[parameters('Download_file_from_URI.URI')]"
+              },
+              {
+                "name": "FileDestination",
+                "value": "[parameters('Download_file_from_URI.FileDestination')]"
+              }
+            ]
+          }
+        ],
+        "labSubnetName": "[variables('labSubnetName')]",
+        "disallowPublicIpAddress": true,
+        "storageType": "Premium",
+        "allowClaim": false,
+        "networkInterface": {
+          "sharedPublicIpAddressConfiguration": {
+            "inboundNatRules": [
+              {
+                "transportProtocol": "tcp",
+                "backendPort": 3389
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "labVMId": {
+      "type": "string",
+      "value": "[variables('vmId')]"
+    }
+  }
+}
