@@ -81,8 +81,8 @@ namespace NBABot.Dialogs
 
             // Randomly select one of the two offers. Replace this with the line
             // below after the ML Web service is trained and deployed
-            //string offer = new Random().Next(2) == 0 ? offer1 : offer2;
-            string offer = await GetOptimalOfferFromMLService(intent, product);
+            string offer = new Random().Next(2) == 0 ? offer1 : offer2;
+            //string offer = await GetOptimalOfferFromMLService(intent, product);
 
             lob = lob.Clone();
             lob.Text = offer;
