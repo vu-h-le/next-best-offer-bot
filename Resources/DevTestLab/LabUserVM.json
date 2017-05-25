@@ -4,11 +4,11 @@
   "parameters": {
     "newVMName": {
       "type": "string",
-      "defaultValue": "BotBuilder00"
+      "defaultValue": "botbuilder00"
     },
     "labName": {
       "type": "string",
-      "defaultValue": "CISBotHackathon"
+      "defaultValue": "deleteme"
     },
     "size": {
       "type": "string",
@@ -19,8 +19,7 @@
       "defaultValue": "labuser"
     },
     "password": {
-      "type": "securestring",
-      "defaultValue": "[[[VmAdminPassword]]"
+      "type": "securestring"
     },
     "Clone_a_git_repository.GitRepoURI": {
       "type": "string",
@@ -35,12 +34,11 @@
       "defaultValue": "master"
     },
     "Clone_a_git_repository.PersonalAccessToken": {
-      "type": "securestring",
-      "defaultValue": "[[[GitHubPersonalAccessToken]]"
+      "type": "securestring"
     },
     "Download_file_from_URI.URI": {
       "type": "string",
-      "defaultValue": "https://acisbothackathon3498.blob.core.windows.net/botbuilderprereqs/botframework-emulator-Setup-3.5.29.exe"
+      "defaultValue": "https://vulecloudstorage.blob.core.windows.net/botbuilderprereqs/botframework-emulator-Setup-3.5.29.exe"
     },
     "Download_file_from_URI.FileDestination": {
       "type": "string",
@@ -62,8 +60,8 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "labVirtualNetworkId": "[variables('labVirtualNetworkId')]",
-        "notes": "BotBuilderCustomImage",
-        "customImageId": "/subscriptions/9d7135b4-971c-4888-a3e6-f9e45a21d7dd/resourcegroups/cisbothackathonrg031444/providers/microsoft.devtestlab/labs/cisbothackathon/customimages/botbuildercustomimage",
+        "notes": "BotBuilderWorkstation",
+        "customImageId": "/subscriptions/a0b67d5b-1af8-4a6e-bac7-330237696b68/resourcegroups/deletemerg133792/providers/microsoft.devtestlab/labs/deleteme/customimages/botbuilderworkstation",
         "size": "[parameters('size')]",
         "userName": "[parameters('userName')]",
         "password": "[parameters('password')]",

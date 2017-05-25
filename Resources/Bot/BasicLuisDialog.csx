@@ -13,27 +13,24 @@ using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
 
 
-// For more information about this template visit http://aka.ms/azurebots-csharp-luis
 [Serializable]
 public class BasicLuisDialog : LuisDialog<object>
 {
+    private const string offer1 = "Would you like to schedule an appointment?";
+    private const string offer2 = "Would you like to receive a brochure?";
 
     // Replace this with the Logic App Request URL.
-    const string logicAppURL = "...";
+    private static string logicAppURL = "YOUR LOGIC APP URL";
     // Replace this with the URL for the web service
-    const string mlWebServiceURL = "...";
+    private static string mlWebServiceURL = "YOUR AML WEB SERVICE URL";
     // Replace this with the API key for the web service
-    const string mlWebServiceApiKey = "...";
-
-    const string offer1 = "Would you like to schedule an appointment?";
-    const string offer2 = "Would you like to receive a brochure?";
+    private static string mlWebServiceApiKey = "YOUR AML WEB SERVICE KEY";
 
     //TODO use context
     private MsgObj lob = new MsgObj();
 
     public BasicLuisDialog() : base(new LuisService(new LuisModelAttribute(Utils.GetAppSetting("LuisAppId"), Utils.GetAppSetting("LuisAPIKey"))))
-    {
-    }
+    { }
 
     [LuisIntent("None")]
     public async Task NoneIntent(IDialogContext context, LuisResult result)
@@ -83,8 +80,8 @@ public class BasicLuisDialog : LuisDialog<object>
 
         // Randomly select one of the two offers. Replace this with the line
         // below after the ML Web service is trained and deployed
-        string offer = new Random().Next(2) == 0 ? offer1 : offer2;
-        // string offer = await GetOptimalOfferFromMLService(intent, product);
+        //string offer = new Random().Next(2) == 0 ? offer1 : offer2;
+        string offer = await GetOptimalOfferFromMLService(intent, product);
 
         lob = lob.Clone();
         lob.Text = offer;
@@ -155,16 +152,30 @@ public class BasicLuisDialog : LuisDialog<object>
         {
             var scoreRequest = new
             {
-                Inputs = new Dictionary<string, StringTable>() {
+                Inputs = new Dictionary<string, List<Dictionary<string, string>>>()
                     {
-                        "input1",
-                        new StringTable()
                         {
-                            ColumnNames = new string[] {"intent", "product", "offer", "outcome"},
-                            Values = new string[,] {  { intent, product, offer1, "0" },  { intent, product, offer2, "0" },  }
+                            "input1",
+                            new List<Dictionary<string, string>>()
+                            {
+                                new Dictionary<string, string>()
+                                {
+                                    {"intent", intent},
+                                    {"product", product},
+                                    {"offer", offer1},
+                                    {"outcome", "0"}
+                                },
+                                new Dictionary<string, string>()
+                                {
+                                    {"intent", intent},
+                                    {"product", product},
+                                    {"offer", offer2},
+                                    {"outcome", "0"}
+                                }
+                            }
                         }
                     },
-                }
+                GlobalParameters = new Dictionary<string, string>() { }
             };
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", mlWebServiceApiKey);
@@ -174,12 +185,12 @@ public class BasicLuisDialog : LuisDialog<object>
 
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadAsAsync<Dictionary<string,  Dictionary<string, ResultOutput>>>();
-                var output = result["Results"]["output1"];
-                var probIndex = Array.IndexOf(output.Value.ColumnNames, "Scored Probabilities");
-                var offer1AcceptProb = Double.Parse(output.Value.Values[0, probIndex]);
-                var offer2AcceptProb = Double.Parse(output.Value.Values[1, probIndex]);
+                var amlWebServiceResponse = await response.Content.ReadAsAsync<AmlResponse>();
+                var offer1AcceptProb = amlWebServiceResponse.Results.Outputs[0].Probability;
+                var offer2AcceptProb = amlWebServiceResponse.Results.Outputs[1].Probability;
                 var offer = offer1AcceptProb >= offer2AcceptProb ? offer1 : offer2;
+
+                System.Diagnostics.Debug.WriteLine("Offer: {0}", offer);
                 return offer;
             }
             else
@@ -218,22 +229,36 @@ public class MsgObj
 }
 
 
-public class StringTable
+public class ExecutionOutput
 {
-    public string[] ColumnNames { get; set; }
-    public string[,] Values { get; set; }
+    [JsonProperty("intent")]
+    public string Intent { get; set; }
+
+    [JsonProperty("product")]
+    public string Product { get; set; }
+
+    [JsonProperty("offer")]
+    public string Offer { get; set; }
+
+    [JsonProperty("outcome")]
+    public string Outcome { get; set; }
+
+    [JsonProperty("Scored Labels")]
+    public int Label { get; set; }
+
+    [JsonProperty("Scored Probabilities")]
+    public double Probability { get; set; }
 }
 
-
-public class ResultOutput
+public class ExecutionResults
 {
-    public string Type { get; set; }
-    public ResultValue Value { get; set; }
+    [JsonProperty("output1")]
+    public List<ExecutionOutput> Outputs { get; set; }
 }
 
-public class ResultValue : StringTable
+public class AmlResponse
 {
-    public string[] ColumnTypes { get; set; }
+    public ExecutionResults Results { get; set; }
 }
 
 
