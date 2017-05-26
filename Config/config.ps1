@@ -18,7 +18,7 @@ $dataLakeAnalyticsName = $namePrefix + "adla"
 $storageAccountName = $namePrefix + "storage"
 #endregion
 
-$sqlName = $namePrefix + "sql"
+$sqlName = $namePrefix + "sqlsrv"
 $dwName = $namePrefix + "dw"
 
 $dataFactoryName = $namePrefix + "adf"
