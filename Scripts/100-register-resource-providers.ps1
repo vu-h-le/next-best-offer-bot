@@ -1,0 +1,12 @@
+﻿Register-AzureRmResourceProvider -ProviderNamespace Microsoft.CognitiveServices
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DataLakeAnalytics
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DataLakeStore
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.EventHub
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Logic
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.MachineLearning
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Sql
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Storage
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.StreamAnalytics
+Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Web
